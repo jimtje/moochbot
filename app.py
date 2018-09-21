@@ -149,12 +149,14 @@ def moochbot():
                          user_agent='Moochbot 0.1')
     # debug
     try:
-        for comment in reddit.subreddit('test').stream.comments(skip_existing=True):
-            if '!moochbot' or 'how many mooches' in comment.body.lower():
+        for comment in reddit.subreddit('all').stream.comments(skip_existing=True):
+            if '!moochbot' in comment.body or 'how many mooches' in comment.body.lower():
                 ret = parse_arbitrary(comment.body)
                 log.debug(ret)
                 if ret is not None:
                     comment.reply(ret)
+            else:
+                pass
     except Exception as e:
         log.debug(e)
 
