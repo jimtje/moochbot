@@ -1,0 +1,7 @@
+
+
+
+CLIENT_ID = 'ajwYEmG7woW7ng'
+CLIENT_SECRET = '2tgWGvcCQZUAsJjO_1XoKHx2DJ4'
+USERNAME = 'moochbot'
+PASSWORD = 'B@R3B@CK'
