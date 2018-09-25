@@ -123,18 +123,21 @@ def parse_arbitrary(phrase):
         from dateparser.search import search_dates
         res = search_dates(phrase)
         log.debug(res)
-        if len(res) == 2:
-            start_date = res[0][1]
-            end_date = res[1][1]
-            mooch_count = mooch_convert(start_date, end_date)
-            return "{} mooches between {} and {}".format(mooch_count, start_date.strftime("%B %d, %Y"),
+        if tuple(res):
+            if len(res) == 2:
+                start_date = res[0][1]
+                end_date = res[1][1]
+                mooch_count = mooch_convert(start_date, end_date)
+                return "{} mooches between {} and {}".format(mooch_count, start_date.strftime("%B %d, %Y %I:%M:%S"),
                                                      end_date.strftime("%B %d, %Y"))
-        elif len(res) == 1:
-            start_date = res[0][1]
-            end_date = datetime.datetime.now()
-            mooch_count = mooch_convert(start_date, end_date)
-            return "{} mooches between {} and {}".format(mooch_count, start_date.strftime("%B %d, %Y"),
+            elif len(res) == 1:
+                start_date = res[0][1]
+                end_date = datetime.datetime.now()
+                mooch_count = mooch_convert(start_date, end_date)
+                return "{} mooches between {} and {}".format(mooch_count, start_date.strftime("%B %d, %Y %I:%M:%S"),
                                                      end_date.strftime("%B %d, %Y"))
+            else:
+                return None
         else:
             return None
 
@@ -146,26 +149,30 @@ def moochbot():
     username = config.USERNAME
     password = config.PASSWORD
     reddit = praw.Reddit(client_id=client_id, client_secret=client_secret, password=password, username=username,
-                         user_agent='Moochbot 0.1')
+                         user_agent='Moochbot 0.2')
     # debug
     try:
-        for comment in reddit.subreddit('all').stream.comments(skip_existing=True):
+        for comment in reddit.subreddit('politics').stream.comments(skip_existing=True):
             if '!moochbot' in comment.body or 'how many mooches' in comment.body.lower():
                 ret = parse_arbitrary(comment.body)
                 log.debug(ret)
                 if ret is not None:
-                    comment.reply(ret)
+                    comment.reply(ret + "\n *** \n ^^I'm ^^a ^^bot, ^^let ^^me ^^know ^^if ^^there ^^are ^^errors!")
+                else:
+                    pass
             else:
                 pass
     except Exception as e:
         log.debug(e)
+        pass
 
 
 if __name__ == '__main__':
-    try:
-        moochbot()
-    except:
-        pass
+    while True:
+        try:
+            moochbot()
+        except:
+            pass
 
 
 
